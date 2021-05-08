@@ -1,0 +1,20 @@
+<div class="details-container">
+  <div>
+    {{ cityWeatherInfo?.city?.name }}
+  </div>
+  <div class="cards-container">
+    <div class="card" *ngFor="let weather of cityWeatherInfo?.list">
+      <div class="">
+        {{ 1620471600 | date }}
+      </div>
+      <div class="">
+          <span>Temp: </span>
+          <span>{{weather?.temp?.max}} / {{weather?.temp?.min}}</span>
+      </div>
+      <div class="">
+          <span>Temp: </span>
+          <span>{{weather?.temp?.max}} / {{weather?.temp?.min}}</span>
+      </div>
+    </div>
+  </div>
+</div>
