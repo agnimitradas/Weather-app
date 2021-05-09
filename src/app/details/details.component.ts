@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable, of, Subject } from 'rxjs';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { DetailsService } from './details.service';
 
 @Component({
@@ -14,6 +14,7 @@ import { DetailsService } from './details.service';
 export class DetailsComponent implements OnInit {
   private unsub: Subject<any> = new Subject<any>();
   cityWeatherInfo: { [key: string]: any } = {};
+  loading: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -21,13 +22,33 @@ export class DetailsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.route.params.pipe(takeUntil(this.unsub)).subscribe((params) => {
-      if (!params || params.name == null) {
-        return;
-      }
-      this.detailsService.getForecastedData(params.name).subscribe((data) => {
-        this.cityWeatherInfo = data;
-      });
-    });
+    this.getCityName()
+      .pipe(
+        takeUntil(this.unsub),
+        switchMap((name) => {
+          if (name == null) {
+            return of(null);
+          }
+          this.loading = true;
+          return this.detailsService.getForecastedData(name);
+        })
+      )
+      .subscribe(
+        (data) => {
+          this.loading = false;
+          this.cityWeatherInfo = data;
+        },
+        (err) => {
+          this.loading = false;
+        }
+      );
+  }
+
+  getCityName(): Observable<any> {
+    return this.route.params.pipe(
+      map((params) => {
+        return params && params.name;
+      })
+    );
   }
 }

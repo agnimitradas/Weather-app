@@ -1,20 +1,26 @@
-<div class="details-container">
-  <div>
-    {{ cityWeatherInfo?.city?.name }}
-  </div>
-  <div class="cards-container">
-    <div class="card" *ngFor="let weather of cityWeatherInfo?.list">
-      <div class="">
-        {{ 1620471600 | date }}
-      </div>
-      <div class="">
-          <span>Temp: </span>
-          <span>{{weather?.temp?.max}} / {{weather?.temp?.min}}</span>
-      </div>
-      <div class="">
-          <span>Temp: </span>
-          <span>{{weather?.temp?.max}} / {{weather?.temp?.min}}</span>
+<div class="details-container" *ngIf="!loading">
+  <ng-container *ngIf="cityWeatherInfo && cityWeatherInfo.city; else nodataTpl">
+    <div>
+      <button class="back-botton" [routerLink]="['/home']">Back to Home</button>
+      {{ cityWeatherInfo?.city?.name }}
+    </div>
+    <div class="cards-container">
+      <div class="card" *ngFor="let weather of cityWeatherInfo?.list">
+        <div class="">
+          {{ weather.dt * 1000 | date }}
+        </div>
+        <div class="">
+          <span>Max Temp: </span>
+          <span>{{ weather?.temp?.max }}<span>&#8451;</span></span>
+        </div>
+        <div class="">
+          <span>Min Temp: </span>
+          <span>{{ weather?.temp?.min }}<span>&#8451;</span></span>
+        </div>
       </div>
     </div>
-  </div>
+  </ng-container>
+  <ng-template #nodataTpl>
+    <div>No data found</div>
+  </ng-template>
 </div>
